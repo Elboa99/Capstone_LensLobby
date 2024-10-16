@@ -1,5 +1,6 @@
 package kennyboateng.Capstone_LensLobby.exceptions;
 
+import kennyboateng.Capstone_LensLobby.payloads.ErrorsResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ResponseStatus;

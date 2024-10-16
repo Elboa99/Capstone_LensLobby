@@ -1,6 +1,8 @@
 package kennyboateng.Capstone_LensLobby.services;
 
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
+import kennyboateng.Capstone_LensLobby.exceptions.UnauthorizedException;
+import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
 import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
