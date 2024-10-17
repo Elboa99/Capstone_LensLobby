@@ -99,33 +99,4 @@ public class FotografoService {
         return fotografoRepository.findByNomeUtenteContainingIgnoreCase(username);
     }
 
-    public Immagine saveImageWithExif(MultipartFile file, Long fotografoId, Long categoriaId) throws Exception {
-        String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
-        Immagine immagine = new Immagine();
-        immagine.setUrl(url);
-
-        // Estrazione e salvataggio dei dati EXIF
-        Metadata metadata = ImageMetadataReader.readMetadata(file.getInputStream());
-        ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-
-        if (directory != null) {
-            immagine.setCameraMake(directory.getDescription(ExifIFD0Directory.TAG_MAKE));
-            immagine.setCameraModel(directory.getDescription(ExifIFD0Directory.TAG_MODEL));
-            immagine.setDateTimeOriginal(directory.getDescription(ExifIFD0Directory.TAG_DATETIME));
-            // aggiungi altri campi EXIF come necessario
-        }
-
-        // Associa l'immagine a fotografo e categoria
-        Fotografo fotografo = fotografoRepository.findById(fotografoId)
-                .orElseThrow(() -> new RuntimeException("Fotografo non trovato con id: " + fotografoId));
-        immagine.setFotografo(fotografo);
-
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-                .orElseThrow(() -> new RuntimeException("Categoria non trovata con id: " + categoriaId));
-        immagine.setCategoria(categoria);
-
-        return immagineRepository.save(immagine);
-    }
-
-
 }

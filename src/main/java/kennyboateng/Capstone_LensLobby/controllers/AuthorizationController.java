@@ -5,6 +5,7 @@ import kennyboateng.Capstone_LensLobby.exceptions.BadRequestException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoLoginDTO;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoLoginResponseDTO;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
+
 import kennyboateng.Capstone_LensLobby.services.AuthorizationService;
 import kennyboateng.Capstone_LensLobby.services.FotografoService;
 import org.springframework.beans.factory.annotation.Autowired;

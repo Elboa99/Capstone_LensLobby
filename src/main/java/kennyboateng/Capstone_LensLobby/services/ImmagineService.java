@@ -98,13 +98,8 @@ public class ImmagineService {
         return immagineRepository.save(immagine);
     }
 
-
-
         public void deleteImmagine(Long id) {
             immagineRepository.deleteById(id);
         }
-
-
-
     }
 

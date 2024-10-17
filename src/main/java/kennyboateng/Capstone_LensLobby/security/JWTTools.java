@@ -17,7 +17,7 @@ public class JWTTools {
     private String secret;
 
     public String createToken(Fotografo fotografo) {
-      
+
         return Jwts.builder()
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
