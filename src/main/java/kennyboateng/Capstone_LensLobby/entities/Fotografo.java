@@ -52,6 +52,9 @@ public class Fotografo implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role ruolo = Role.USER;  // Ruolo del fotografo, può essere USER, ADMIN
 
+    @Column
+    private String avatar;
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {

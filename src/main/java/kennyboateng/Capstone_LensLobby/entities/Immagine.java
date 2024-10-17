@@ -27,4 +27,23 @@ public class Immagine {
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
+
+    // Dati EXIF
+    @Column
+    private String cameraMake;
+
+    @Column
+    private String cameraModel;
+
+    @Column
+    private String exposureTime;
+
+    @Column
+    private String aperture;
+
+    @Column
+    private String iso;
+
+    @Column
+    private String dateTimeOriginal;
 }
