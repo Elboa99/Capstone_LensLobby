@@ -43,6 +43,18 @@ public class FotografoController {
         fotografoService.deleteFotografo(id);
     }
 
+
+    @GetMapping("/search/by-nome")
+    public List<Fotografo> searchFotografiByNome(@RequestParam String nome) {
+        return fotografoService.findByNome(nome);
+    }
+
+
+    @GetMapping("/search/by-username")
+    public List<Fotografo> searchFotografiByUsername(@RequestParam String username) {
+        return fotografoService.findByUsername(username);
+    }
+
     //*************** FILTRI *****************
 
     @GetMapping("/filter/nome")

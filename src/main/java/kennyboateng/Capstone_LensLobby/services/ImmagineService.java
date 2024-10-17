@@ -38,6 +38,16 @@ public class ImmagineService {
         return immagineRepository.findById(id);
     }
 
+    // Metodo per trovare tutte le immagini di un dato fotografo
+    public List<Immagine> findImmaginiByFotografoId(Long fotografoId) {
+        return immagineRepository.findByFotografoId(fotografoId);
+    }
+
+    // Metodo per trovare tutte le immagini di una data categoria
+    public List<Immagine> findImmaginiByCategoriaId(Long categoriaId) {
+        return immagineRepository.findByCategoriaId(categoriaId);
+    }
+
     public Immagine saveImmagine(Immagine immagine) {
         return immagineRepository.save(immagine);
     }

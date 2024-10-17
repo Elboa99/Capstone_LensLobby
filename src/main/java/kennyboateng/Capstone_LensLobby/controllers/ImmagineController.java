@@ -45,6 +45,18 @@ public class ImmagineController {
     }
 
 
+    @GetMapping("/by-fotografo/{fotografoId}")
+    public List<Immagine> getImmaginiByFotografo(@PathVariable Long fotografoId) {
+        return immagineService.findImmaginiByFotografoId(fotografoId);
+    }
+
+
+    @GetMapping("/by-categoria/{categoriaId}")
+    public List<Immagine> getImmaginiByCategoria(@PathVariable Long categoriaId) {
+        return immagineService.findImmaginiByCategoriaId(categoriaId);
+    }
+
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteImmagine(@PathVariable Long id) {

@@ -42,6 +42,11 @@ public class RecensioneService {
                 });
     }
 
+    // Metodo per trovare recensioni per un dato fotografo
+    public List<Recensione> findRecensioniByFotografoId(Long fotografoId) {
+        return recensioneRepository.findByFotografoId(fotografoId);
+    }
+
     public void deleteRecensione(Long id) {
         recensioneRepository.deleteById(id);
     }

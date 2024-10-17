@@ -18,6 +18,10 @@ public class CategoriaService {
         return categoriaRepository.findById(id);
     }
 
+    public List<Categoria> findCategorieByNome(String nome) {
+        return categoriaRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
     public List<Categoria> findAllCategorie() {
         return categoriaRepository.findAll();
     }

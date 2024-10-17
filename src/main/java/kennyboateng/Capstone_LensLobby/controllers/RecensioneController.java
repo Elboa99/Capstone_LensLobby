@@ -42,6 +42,11 @@ public class RecensioneController {
                 .orElseThrow(() -> new RuntimeException("Recensione non trovata con id: " + id));
     }
 
+    @GetMapping("/fotografo/{fotografoId}")
+    public List<Recensione> getRecensioniByFotografoId(@PathVariable Long fotografoId) {
+        return recensioneService.findRecensioniByFotografoId(fotografoId);
+    }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
