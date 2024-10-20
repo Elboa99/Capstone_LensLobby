@@ -16,7 +16,8 @@ public record FotografoPayloadDTO(
 
         @NotEmpty(message = "Devi inserire una password")
         @Size(min = 8, message = "La password deve avere almeno 8 caratteri")
-        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "La password deve contenere almeno un numero, una lettera maiuscola, una minuscola e un carattere speciale.")
+        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?.|%*\\-_:~;])(?=\\S+$).{8,}$", message = "La password deve contenere almeno un numero, una lettera maiuscola, una minuscola e un carattere speciale (inclusi @, #, $, %, ^, &, *, +, =, !, ?, ., |, -, _, :, ~, ;).")
+
         String password,
 
         @NotEmpty(message = "Devi inserire un nome")
