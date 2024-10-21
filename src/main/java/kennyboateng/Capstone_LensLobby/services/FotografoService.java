@@ -34,6 +34,8 @@ public class FotografoService {
     @Autowired
     private Cloudinary cloudinary;
 
+
+
     // Metodo per trovare un fotografo per ID
     public Fotografo findFotografoById(Long id) throws NotFoundException {
         return fotografoRepository.findById(id)
@@ -46,6 +48,11 @@ public class FotografoService {
     }
 
     public Fotografo registerFotografo(FotografoPayloadDTO body, MultipartFile profileImage) throws IOException {
+        // Controlla se esiste già un fotografo con la stessa email
+        if (fotografoRepository.findByEmail(body.email()).isPresent()) {
+            throw new IllegalStateException("Email già in uso");
+        }
+
         // Mappiamo il DTO FotografoPayloadDTO a un'entità Fotografo
         Fotografo fotografo = new Fotografo();
         fotografo.setNome(body.nome());

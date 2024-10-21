@@ -21,7 +21,7 @@ public class Config {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authorization/**").permitAll()
+                        .requestMatchers("/authorization/**", "/fotografi/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtCheckFilter, UsernamePasswordAuthenticationFilter.class);
