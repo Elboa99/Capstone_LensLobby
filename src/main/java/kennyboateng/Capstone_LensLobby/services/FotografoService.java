@@ -1,6 +1,7 @@
 package kennyboateng.Capstone_LensLobby.services;
 
 import com.cloudinary.Cloudinary;
+import jakarta.transaction.Transactional;
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.exceptions.UnauthorizedException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
@@ -10,8 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cloudinary.utils.ObjectUtils;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class FotografoService {
@@ -25,69 +31,36 @@ public class FotografoService {
     @Autowired
     private Cloudinary cloudinary;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    public Fotografo registerFotografo(Fotografo fotografo, MultipartFile profileImage) throws IOException {
+        fotografo.setPassword(bcrypt.encode(fotografo.getPassword()));
 
-    @Autowired
-    private ImmagineRepository immagineRepository;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(profileImage.getBytes(), ObjectUtils.asMap(
+                    "folder", "profile_images",
+                    "public_id", "fotografo_" + fotografo.getEmail()
+            ));
+            fotografo.setImmagineProfilo(uploadResult.get("url").toString());
+        }
 
-    public Optional<Fotografo> findFotografoById(Long id) {
-        return fotografoRepository.findById(id);
-    }
-
-
-    public Fotografo saveFotografo(Fotografo fotografo) {
         return fotografoRepository.save(fotografo);
     }
 
-    public List<Fotografo> findAllFotografi() {
-        return fotografoRepository.findAll();
+    public Fotografo updateFotografo(Long id, Fotografo updatedFotografo, MultipartFile profileImage) throws Exception {
+        Fotografo existingFotografo = fotografoRepository.findById(id)
+                .orElseThrow(() -> new Exception("Fotografo not found"));
+
+        existingFotografo.setNome(updatedFotografo.getNome());
+        existingFotografo.setEmail(updatedFotografo.getEmail());
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(profileImage.getBytes(), ObjectUtils.asMap(
+                    "folder", "profile_images",
+                    "public_id", "fotografo_" + updatedFotografo.getEmail()
+            ));
+            existingFotografo.setImmagineProfilo(uploadResult.get("url").toString());
+        }
+
+        return fotografoRepository.save(existingFotografo);
     }
-
-
-    public Fotografo loadFotografoById(Long id) throws UnauthorizedException {
-        return findFotografoById(id).orElseThrow(() -> new UnauthorizedException("Fotografo non trovato."));
-    }
-
-    public Fotografo updateFotografo(Long id, Fotografo updatedFotografo) {
-        return fotografoRepository.findById(id)
-                .map(fotografo -> {
-                    fotografo.setNomeUtente(updatedFotografo.getNomeUtente());
-                    fotografo.setNome(updatedFotografo.getNome());
-                    fotografo.setEmail(updatedFotografo.getEmail());
-                    fotografo.setBiografia(updatedFotografo.getBiografia());
-
-                    return fotografoRepository.save(fotografo);
-                })
-                .orElseThrow(() -> new RuntimeException("Fotografo non trovato con id: " + id));
-    }
-
-
-    public void deleteFotografo(Long id) {
-        fotografoRepository.deleteById(id);
-    }
-
-    public Optional<Fotografo> findByEmail(String email) {
-        return fotografoRepository.findByEmail(email);
-    }
-
-    public Fotografo registerFotografo(FotografoPayloadDTO fotografoDTO) {
-        Fotografo newFotografo = new Fotografo();
-        newFotografo.setNomeUtente(fotografoDTO.nomeUtente());
-        newFotografo.setEmail(fotografoDTO.email());
-        newFotografo.setNome(fotografoDTO.nome());
-        newFotografo.setBiografia(fotografoDTO.biografia());
-
-        newFotografo.setPassword(bcrypt.encode(fotografoDTO.password()));
-        return fotografoRepository.save(newFotografo);
-    }
-
-    public List<Fotografo> findByNome(String nome) {
-        return fotografoRepository.findByNomeContainingIgnoreCase(nome);
-    }
-
-    public List<Fotografo> findByUsername(String username) {
-        return fotografoRepository.findByNomeUtenteContainingIgnoreCase(username);
-    }
-
 }
+

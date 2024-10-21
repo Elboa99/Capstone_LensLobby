@@ -27,8 +27,8 @@ public record FotografoPayloadDTO(
 
         @NotEmpty(message = "Devi inserire un cognome")
         @Size(min = 3, max = 40, message = "Il cognome deve avere dai 3 ai 40 caratteri")
-        String cognome,
+        String cognome
 
-        String biografia
+
 ) {
 }
