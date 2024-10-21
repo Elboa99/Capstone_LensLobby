@@ -36,19 +36,24 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         String accessToken = authHeader.substring(7);
         jwtTools.verifyToken(accessToken);
 
-        Long fotografoId = jwtTools.getFotografoIdFromToken(accessToken);
-        Fotografo currentFotografo = fotografoService.loadFotografoById(fotografoId);
+        try {
+            Long fotografoId = jwtTools.getFotografoIdFromToken(accessToken);
+            Fotografo currentFotografo = fotografoService.findFotografoById(fotografoId);
 
-        if (currentFotografo != null) {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    currentFotografo,
-                    null,
-                    currentFotografo.getAuthorities()
-            );
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            throw new UnauthorizedException("Utente non trovato.");
+            if (currentFotografo != null) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        currentFotografo,
+                        null,
+                        currentFotografo.getAuthorities()
+                );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new UnauthorizedException("Utente non trovato.");
+            }
+
+        } catch (Exception e) {
+            throw new UnauthorizedException("Errore durante l'autenticazione: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

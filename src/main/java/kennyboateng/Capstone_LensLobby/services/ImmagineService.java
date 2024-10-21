@@ -9,7 +9,9 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ImmagineService {
@@ -19,6 +21,16 @@ public class ImmagineService {
 
     @Autowired
     private Cloudinary cloudinary;
+
+    // Metodo per trovare tutte le immagini
+    public List<Immagine> findAllImmagini() {
+        return immagineRepository.findAll();
+    }
+
+    // Metodo per trovare un'immagine per ID
+    public Optional<Immagine> findImmagineById(Long id) {
+        return immagineRepository.findById(id);
+    }
 
     // Salva una nuova immagine
     public Immagine salvaImmagine(Immagine immagine, MultipartFile fileImmagine, Fotografo fotografo) throws IOException {
@@ -35,7 +47,7 @@ public class ImmagineService {
     }
 
     // Aggiorna un'immagine esistente
-    public Immagine aggiornaImmagine(Long idImmagine, Immagine immagineAggiornata, MultipartFile fileImmagine, Fotografo fotografo) throws Exception {
+    public Immagine updateImmagine(Long idImmagine, Immagine immagineAggiornata, MultipartFile fileImmagine, Fotografo fotografo) throws Exception {
         Immagine immagineEsistente = immagineRepository.findById(idImmagine)
                 .orElseThrow(() -> new Exception("Immagine non trovata"));
 
@@ -56,7 +68,7 @@ public class ImmagineService {
     }
 
     // Elimina un'immagine
-    public void eliminaImmagine(Long idImmagine, Fotografo fotografo) throws Exception {
+    public void deleteImmagine(Long idImmagine, Fotografo fotografo) throws Exception {
         Immagine immagine = immagineRepository.findById(idImmagine)
                 .orElseThrow(() -> new Exception("Immagine non trovata"));
 

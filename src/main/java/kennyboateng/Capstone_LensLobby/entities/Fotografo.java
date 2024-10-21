@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +32,10 @@ public class Fotografo implements UserDetails {
     private Role ruolo = Role.USER;
 
     private String immagineProfilo;
+
+    @OneToMany(mappedBy = "fotografo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Immagine> immagini;
 
     @Override
     @JsonIgnore
@@ -68,4 +73,5 @@ public class Fotografo implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
