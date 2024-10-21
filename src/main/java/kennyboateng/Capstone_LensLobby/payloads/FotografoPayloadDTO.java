@@ -12,6 +12,7 @@ public record FotografoPayloadDTO(
 
         @NotEmpty(message = "Devi inserire una email")
         @Email(message = "Devi inserire una email valida")
+
         String email,
 
         @NotEmpty(message = "Devi inserire una password")

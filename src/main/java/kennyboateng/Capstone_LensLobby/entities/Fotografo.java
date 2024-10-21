@@ -1,7 +1,6 @@
 package kennyboateng.Capstone_LensLobby.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import kennyboateng.Capstone_LensLobby.enums.Role;
 import lombok.*;
@@ -10,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,52 +17,31 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties({"password", "role", "authorities", "enabled", "accountNonLocked", "accountNonExpired", "credentialsNonExpired"})
-
-
 @Table(name = "fotografi")
-
 public class Fotografo implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String nomeUtente;
-
-    @Column(nullable = false)
     private String nome;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column
-    private String biografia;
-
-    @OneToMany(mappedBy = "fotografo")
-    private List<Immagine> immagini;
-
-    @JsonIgnore
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role ruolo = Role.USER;  // Ruolo del fotografo, può essere USER, ADMIN
+    private Role ruolo = Role.USER;
 
-    @Column
-    private String avatar;
+    private String immagineProfilo;
 
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.ruolo.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.ruolo.name()));
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
     @Override
@@ -81,6 +59,7 @@ public class Fotografo implements UserDetails {
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
+
         return true;
     }
 
@@ -89,6 +68,4 @@ public class Fotografo implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }

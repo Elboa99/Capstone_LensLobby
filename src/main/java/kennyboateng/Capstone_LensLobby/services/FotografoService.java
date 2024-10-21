@@ -1,24 +1,15 @@
 package kennyboateng.Capstone_LensLobby.services;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import kennyboateng.Capstone_LensLobby.entities.Categoria;
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
-import kennyboateng.Capstone_LensLobby.entities.Immagine;
 import kennyboateng.Capstone_LensLobby.exceptions.UnauthorizedException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
-import kennyboateng.Capstone_LensLobby.repositories.CategoriaRepository;
 import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import kennyboateng.Capstone_LensLobby.repositories.ImmagineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 

@@ -14,20 +14,16 @@ public class Immagine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false)
     private String url;
+    private String descrizione;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fotografo_id", nullable = false)
     private Fotografo fotografo;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", nullable = false)
-    private Categoria categoria;
-
+    // Getters and setters
     // Dati EXIF
     @Column
     private String cameraMake;
