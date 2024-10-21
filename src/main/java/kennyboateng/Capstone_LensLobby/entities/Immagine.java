@@ -23,23 +23,4 @@ public class Immagine {
     @JoinColumn(name = "fotografo_id", nullable = false)
     private Fotografo fotografo;
 
-    // Getters and setters
-    // Dati EXIF
-    @Column
-    private String cameraMake;
-
-    @Column
-    private String cameraModel;
-
-    @Column
-    private String exposureTime;
-
-    @Column
-    private String aperture;
-
-    @Column
-    private String iso;
-
-    @Column
-    private String dateTimeOriginal;
 }

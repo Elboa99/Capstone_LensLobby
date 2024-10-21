@@ -5,6 +5,7 @@ import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
 import kennyboateng.Capstone_LensLobby.services.FotografoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +49,36 @@ public class FotografoController {
     @GetMapping("/{id}")
     public Fotografo getFotografoById(@PathVariable Long id) throws Exception {
         return fotografoService.findFotografoById(id);
+    }
+
+    // Endpoint per ottenere i dati del fotografo autenticato
+    @GetMapping("/me")
+    public Fotografo getProfile(@AuthenticationPrincipal Fotografo currentFotografo) {
+        return currentFotografo;
+    }
+
+    // Endpoint per aggiornare i dati del fotografo autenticato
+    @PutMapping("/me")
+    public Fotografo updateProfile(@AuthenticationPrincipal Fotografo currentFotografo,
+                                   @RequestBody FotografoPayloadDTO body,
+                                   @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws Exception {
+        Fotografo updatedFotografo = new Fotografo();
+        updatedFotografo.setNome(body.nome());
+        updatedFotografo.setEmail(body.email());
+        return fotografoService.updateFotografo(currentFotografo.getId(), updatedFotografo, profileImage);
+    }
+
+    // Endpoint per eliminare il profilo del fotografo autenticato
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProfile(@AuthenticationPrincipal Fotografo currentFotografo) throws Exception {
+        fotografoService.deleteFotografo(currentFotografo.getId());
+    }
+
+    // Endpoint per aggiornare l'immagine del profilo del fotografo autenticato
+    @PatchMapping("/me/avatar")
+    public Fotografo uploadAvatarPic(@AuthenticationPrincipal Fotografo currentFotografo,
+                                     @RequestParam("profileImage") MultipartFile profileImage) throws Exception {
+        return fotografoService.updateFotografo(currentFotografo.getId(), currentFotografo, profileImage);
     }
 }

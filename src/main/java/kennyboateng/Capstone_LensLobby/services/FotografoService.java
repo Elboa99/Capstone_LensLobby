@@ -93,5 +93,7 @@ public class FotografoService {
     public Optional<Fotografo> findByEmail(String email) {
         return fotografoRepository.findByEmail(email);
     }
+
+
 }
 
