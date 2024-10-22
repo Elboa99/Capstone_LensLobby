@@ -67,27 +67,7 @@ public class ImmagineService {
         return immagineRepository.save(immagine);
     }
 
-    // Aggiorna un'immagine esistente
-    @PreAuthorize("hasRole('ADMIN') or @immagineService.isImmagineOwner(#idImmagine, #fotografoId)")
-    public Immagine updateImmagine(Long idImmagine, Immagine immagineAggiornata, MultipartFile fileImmagine, Long fotografoId) throws IOException {
-        Immagine immagineEsistente = immagineRepository.findById(idImmagine)
-                .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
 
-        if (!immagineEsistente.getFotografo().getId().equals(fotografoId)) {
-            throw new BadRequestException("Non autorizzato a modificare questa immagine");
-        }
-
-        if (fileImmagine != null && !fileImmagine.isEmpty()) {
-            Map risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
-                    "folder", "uploads_immagini",
-                    "public_id", "immagine_" + fotografoId + "_" + System.currentTimeMillis()
-            ));
-            immagineEsistente.setUrl(risultatoUpload.get("url").toString());
-        }
-
-        immagineEsistente.setDescrizione(immagineAggiornata.getDescrizione());
-        return immagineRepository.save(immagineEsistente);
-    }
 
     // Elimina un'immagine
     @PreAuthorize("hasRole('ADMIN') or @immagineService.isImmagineOwner(#idImmagine, #fotografoId)")

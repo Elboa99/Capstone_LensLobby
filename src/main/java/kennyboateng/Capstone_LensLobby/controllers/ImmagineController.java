@@ -49,14 +49,7 @@ public class ImmagineController {
         return ResponseEntity.ok("Immagine caricata con successo.");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateImmagine(@PathVariable Long id,
-                                                 @RequestBody Immagine immagineAggiornata,
-                                                 @RequestParam(value = "newImageFile", required = false) MultipartFile newImageFile,
-                                                 @AuthenticationPrincipal Fotografo fotografo) throws IOException {
-        immagineService.updateImmagine(id, immagineAggiornata, newImageFile, fotografo.getId());
-        return ResponseEntity.ok("Immagine aggiornata con successo.");
-    }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
