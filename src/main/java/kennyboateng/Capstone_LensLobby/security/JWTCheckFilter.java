@@ -19,7 +19,6 @@ import java.io.IOException;
 
 @Component
 public class JWTCheckFilter extends OncePerRequestFilter {
-
     @Autowired
     private JWTTools jwtTools;
     @Autowired
@@ -30,11 +29,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);  // Continua senza lanciare eccezione, potrebbe essere una richiesta non autenticata
-            return;
+            throw new UnauthorizedException("Per favore inserisci correttamente il token nell'Authorization Header");
         }
 
         String accessToken = authHeader.substring(7);
+
         jwtTools.verifyToken(accessToken);
 
         try {
@@ -52,7 +51,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             } else {
                 throw new UnauthorizedException("Utente non trovato.");
             }
-
         } catch (Exception e) {
             throw new UnauthorizedException("Errore durante l'autenticazione: " + e.getMessage());
         }
@@ -62,7 +60,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/authorization/**", request.getServletPath()) ||
-                new AntPathMatcher().match("/fotografi/register", request.getServletPath());
+        return new AntPathMatcher().match("/authorization/**", request.getServletPath());
     }
 }

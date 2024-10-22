@@ -12,34 +12,27 @@ import java.util.Date;
 
 @Component
 public class JWTTools {
-
     @Value("${jwt.secret}")
     private String secret;
 
-    public String createToken(Fotografo fotografo) {
-
+    public String createToken(Fotografo fotografo){
         return Jwts.builder()
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
-                .setSubject(String.valueOf(fotografo.getId()))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*60*24*14))
+                .subject(String.valueOf(fotografo.getId()))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
-    public void verifyToken(String token) {
-        try {
-
-            Jwts.parser()
-                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))  // Imposta la chiave per la verifica della firma
-                    .build()
-                    .parseClaimsJws(token);
-        } catch (Exception ex) {
-            throw new UnauthorizedException("Problemi col token! Per favore effettua di nuovo il login.");
+    public void verifyToken(String token){
+        try{
+            Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parse(token);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            throw new UnauthorizedException("Problema col TOKEN, riprova il login");
         }
     }
-
     public Long getFotografoIdFromToken(String token) {
-
         return Long.parseLong(Jwts.parser()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .build()
@@ -47,4 +40,5 @@ public class JWTTools {
                 .getBody()
                 .getSubject());
     }
+
 }

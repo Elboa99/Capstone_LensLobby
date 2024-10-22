@@ -6,23 +6,27 @@ import kennyboateng.Capstone_LensLobby.services.FotografoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fotografi")
+
 public class FotografoController {
 
     @Autowired
     private FotografoService fotografoService;
 
-    @GetMapping("/fotografi")
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Fotografo>> getAllFotografi() {
         List<Fotografo> fotografi = fotografoService.findAllFotografi();
         return ResponseEntity.ok(fotografi);
@@ -41,6 +45,7 @@ public class FotografoController {
 
     // Endpoint per aggiornare i dati del fotografo (ad esempio il proprio profilo)
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Fotografo updateFotografo(@PathVariable Long id,
                                      @RequestBody FotografoPayloadDTO body,
                                      @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws Exception {
@@ -55,9 +60,20 @@ public class FotografoController {
 
     // Endpoint per ottenere i dettagli di un fotografo in base all'ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Fotografo getFotografoById(@PathVariable Long id) throws Exception {
         return fotografoService.findFotografoById(id);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFotografo(@PathVariable Long id) throws Exception {
+        fotografoService.deleteFotografo(id);
+    }
+
+
+
 
     // Endpoint per ottenere i dati del fotografo autenticato
     @GetMapping("/me")
