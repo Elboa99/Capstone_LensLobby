@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +21,7 @@ import java.util.List;
 @Setter
 @ToString
 @Table(name = "fotografi")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Fotografo implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

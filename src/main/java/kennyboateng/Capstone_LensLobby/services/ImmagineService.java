@@ -1,8 +1,13 @@
 package kennyboateng.Capstone_LensLobby.services;
+
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.entities.Immagine;
+import kennyboateng.Capstone_LensLobby.exceptions.BadRequestException;
+import kennyboateng.Capstone_LensLobby.exceptions.NotFoundException;
 import kennyboateng.Capstone_LensLobby.repositories.ImmagineRepository;
+import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
@@ -20,6 +25,9 @@ public class ImmagineService {
     private ImmagineRepository immagineRepository;
 
     @Autowired
+    private FotografoRepository fotografoRepository;
+
+    @Autowired
     private Cloudinary cloudinary;
 
     // Metodo per trovare tutte le immagini
@@ -32,33 +40,47 @@ public class ImmagineService {
         return immagineRepository.findById(id);
     }
 
-    // Salva una nuova immagine
-    public Immagine salvaImmagine(Immagine immagine, MultipartFile fileImmagine, Fotografo fotografo) throws IOException {
-        if (fileImmagine != null && !fileImmagine.isEmpty()) {
-            Map risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
-                    "folder", "uploads_immagini",
-                    "public_id", "immagine_" + fotografo.getId() + "_" + System.currentTimeMillis()
-            ));
-            immagine.setUrl(risultatoUpload.get("url").toString());
-        }
+    // Salva una nuova immagine con URL
+    public Immagine salvaImmagineConUrl(Immagine immagine, Long fotografoId) {
+        Fotografo fotografo = fotografoRepository.findById(fotografoId)
+                .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
 
         immagine.setFotografo(fotografo);
         return immagineRepository.save(immagine);
     }
 
-    // Aggiorna un'immagine esistente
-    public Immagine updateImmagine(Long idImmagine, Immagine immagineAggiornata, MultipartFile fileImmagine, Fotografo fotografo) throws Exception {
-        Immagine immagineEsistente = immagineRepository.findById(idImmagine)
-                .orElseThrow(() -> new Exception("Immagine non trovata"));
+    // Carica un'immagine su Cloudinary
+    public Immagine uploadImmagine(Long immagineId, MultipartFile fileImmagine) throws IOException {
+        Immagine immagine = immagineRepository.findById(immagineId)
+                .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
 
-        if (!immagineEsistente.getFotografo().getId().equals(fotografo.getId())) {
-            throw new Exception("Non autorizzato a modificare questa immagine");
+        if (fileImmagine == null || fileImmagine.isEmpty()) {
+            throw new BadRequestException("File dell'immagine obbligatorio.");
+        }
+
+        Map risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
+                "folder", "uploads_immagini",
+                "public_id", "immagine_" + immagine.getFotografo().getId() + "_" + System.currentTimeMillis()
+        ));
+        immagine.setUrl(risultatoUpload.get("url").toString());
+
+        return immagineRepository.save(immagine);
+    }
+
+    // Aggiorna un'immagine esistente
+    @PreAuthorize("hasRole('ADMIN') or @immagineService.isImmagineOwner(#idImmagine, #fotografoId)")
+    public Immagine updateImmagine(Long idImmagine, Immagine immagineAggiornata, MultipartFile fileImmagine, Long fotografoId) throws IOException {
+        Immagine immagineEsistente = immagineRepository.findById(idImmagine)
+                .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
+
+        if (!immagineEsistente.getFotografo().getId().equals(fotografoId)) {
+            throw new BadRequestException("Non autorizzato a modificare questa immagine");
         }
 
         if (fileImmagine != null && !fileImmagine.isEmpty()) {
             Map risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
                     "folder", "uploads_immagini",
-                    "public_id", "immagine_" + fotografo.getId() + "_" + System.currentTimeMillis()
+                    "public_id", "immagine_" + fotografoId + "_" + System.currentTimeMillis()
             ));
             immagineEsistente.setUrl(risultatoUpload.get("url").toString());
         }
@@ -68,19 +90,22 @@ public class ImmagineService {
     }
 
     // Elimina un'immagine
-    public void deleteImmagine(Long idImmagine, Fotografo fotografo) throws Exception {
+    @PreAuthorize("hasRole('ADMIN') or @immagineService.isImmagineOwner(#idImmagine, #fotografoId)")
+    public void deleteImmagine(Long idImmagine, Long fotografoId) {
         Immagine immagine = immagineRepository.findById(idImmagine)
-                .orElseThrow(() -> new Exception("Immagine non trovata"));
+                .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
 
-        if (!immagine.getFotografo().getId().equals(fotografo.getId())) {
-            throw new Exception("Non autorizzato a eliminare questa immagine");
+        if (!immagine.getFotografo().getId().equals(fotografoId)) {
+            throw new BadRequestException("Non autorizzato a eliminare questa immagine");
         }
 
         immagineRepository.delete(immagine);
     }
+
+    // Metodo per verificare se l'utente è il proprietario dell'immagine
+    public boolean isImmagineOwner(Long immagineId, Long fotografoId) {
+        Immagine immagine = immagineRepository.findById(immagineId)
+                .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
+        return immagine.getFotografo().getId().equals(fotografoId);
+    }
 }
-
-
-
-
-
