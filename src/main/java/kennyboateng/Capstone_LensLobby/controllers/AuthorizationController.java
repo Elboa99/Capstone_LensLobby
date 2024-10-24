@@ -48,18 +48,15 @@ public class AuthorizationController {
     // Endpoint per registrare un nuovo fotografo
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public FotografoLoginResponseDTO register(@RequestBody @Validated FotografoPayloadDTO body,
-                                              BindingResult validationResult,
-                                              @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
-        if (validationResult.hasErrors()) {
-            String errors = validationResult.getAllErrors().stream()
-                    .map(objectError -> objectError.getDefaultMessage())
-                    .collect(Collectors.joining(". "));
-            throw new IllegalArgumentException("Errore di validazione: " + errors);
-        }
+    public FotografoLoginResponseDTO register(@RequestParam("email") String email,
+                                              @RequestParam("password") String password,
+                                              @RequestParam("nome") String nome,
+                                              @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+                                              @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) throws IOException {
+        FotografoPayloadDTO body = new FotografoPayloadDTO(email, password, nome);
 
         // Registra il fotografo
-        Fotografo newFotografo = fotografoService.registerFotografo(body, profileImage);
+        Fotografo newFotografo = fotografoService.registerFotografo(body, profileImage, coverImage);
 
         // Genera il token JWT per il nuovo fotografo
         String token = authorizationService.generateToken(newFotografo);

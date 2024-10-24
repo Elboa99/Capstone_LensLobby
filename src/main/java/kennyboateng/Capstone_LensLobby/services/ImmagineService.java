@@ -2,8 +2,10 @@ package kennyboateng.Capstone_LensLobby.services;
 
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.entities.Immagine;
+import kennyboateng.Capstone_LensLobby.enums.Categoria;
 import kennyboateng.Capstone_LensLobby.exceptions.BadRequestException;
 import kennyboateng.Capstone_LensLobby.exceptions.NotFoundException;
+import kennyboateng.Capstone_LensLobby.payloads.ImmaginePayloadDTO;
 import kennyboateng.Capstone_LensLobby.repositories.ImmagineRepository;
 import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +42,19 @@ public class ImmagineService {
         return immagineRepository.findById(id);
     }
 
-    // Salva una nuova immagine con URL
-    public Immagine salvaImmagineConUrl(Immagine immagine, Long fotografoId) {
+    public Immagine salvaImmagineConUrl(ImmaginePayloadDTO immaginePayload, Long fotografoId) {
         Fotografo fotografo = fotografoRepository.findById(fotografoId)
                 .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
 
+        Immagine immagine = new Immagine();
+        immagine.setUrl(immaginePayload.url());
+        immagine.setDescrizione(immaginePayload.descrizione());
+        immagine.setCategoria(Categoria.valueOf(immaginePayload.categoria()));
         immagine.setFotografo(fotografo);
+
         return immagineRepository.save(immagine);
     }
+
 
     // Carica un'immagine su Cloudinary
     public Immagine uploadImmagine(Long immagineId, MultipartFile fileImmagine) throws IOException {

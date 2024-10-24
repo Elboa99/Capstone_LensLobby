@@ -2,12 +2,14 @@ package kennyboateng.Capstone_LensLobby.controllers;
 
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.entities.Immagine;
+import kennyboateng.Capstone_LensLobby.payloads.ImmaginePayloadDTO;
 import kennyboateng.Capstone_LensLobby.services.ImmagineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,10 +39,12 @@ public class ImmagineController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> createImmagine(@AuthenticationPrincipal Fotografo fotografo,
-                                                 @RequestBody Immagine immagine) {
-        immagineService.salvaImmagineConUrl(immagine, fotografo.getId());
+                                                 @RequestBody @Validated ImmaginePayloadDTO immaginePayload) {
+        immagineService.salvaImmagineConUrl(immaginePayload, fotografo.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body("Immagine creata con successo.");
     }
+
+
 
     @PostMapping("/{id}/upload")
     @ResponseStatus(HttpStatus.OK)

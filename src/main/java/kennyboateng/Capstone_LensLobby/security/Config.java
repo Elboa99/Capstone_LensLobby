@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,14 +23,29 @@ import java.util.Arrays;
 @EnableMethodSecurity
 public class Config {
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//
+//        httpSecurity.formLogin(http -> http.disable());
+//        httpSecurity.csrf(http -> http.disable());
+//        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
+//        httpSecurity.cors(Customizer.withDefaults());
+//        return httpSecurity.build();
+//    }
 
-        httpSecurity.formLogin(http -> http.disable());
-        httpSecurity.csrf(http -> http.disable());
-        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
-        httpSecurity.cors(Customizer.withDefaults());
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JWTCheckFilter jwtCheckFilter) throws Exception {
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/authorization/**").permitAll()  // Accesso aperto per autenticazione e registrazione
+                        .anyRequest().authenticated()  // Richiede autenticazione per tutte le altre richieste
+                )
+                .addFilterBefore(jwtCheckFilter, UsernamePasswordAuthenticationFilter.class);
+
         return httpSecurity.build();
     }
 
@@ -42,7 +58,7 @@ public class Config {
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000", "http://localhost:5500"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
 

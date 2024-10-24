@@ -35,6 +35,7 @@ public class Fotografo implements UserDetails {
     private Role ruolo = Role.USER;
 
     private String immagineProfilo;
+    private String copertina;
 
     @OneToMany(mappedBy = "fotografo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

@@ -35,12 +35,17 @@ public class FotografoController {
     // Endpoint per registrare un nuovo fotografo
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public Fotografo registerFotografo(@Validated @RequestBody FotografoPayloadDTO body, BindingResult result,
-                                       @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
+    public Fotografo registerFotografo(
+            @Validated @RequestBody FotografoPayloadDTO body,
+            BindingResult result,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) throws IOException {
+
         if (result.hasErrors()) {
             throw new IllegalArgumentException("Errore di validazione nei dati del fotografo");
         }
-        return fotografoService.registerFotografo(body, profileImage);
+
+        return fotografoService.registerFotografo(body, profileImage, coverImage);
     }
 
     // Endpoint per aggiornare i dati del fotografo (ad esempio il proprio profilo)

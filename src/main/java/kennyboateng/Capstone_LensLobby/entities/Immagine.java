@@ -1,6 +1,8 @@
 package kennyboateng.Capstone_LensLobby.entities;
 
 import jakarta.persistence.*;
+import kennyboateng.Capstone_LensLobby.enums.Categoria;
+import kennyboateng.Capstone_LensLobby.enums.Role;
 import lombok.*;
 
 @AllArgsConstructor
@@ -19,8 +21,13 @@ public class Immagine {
     private String url;
     private String descrizione;
 
+    @Enumerated(EnumType.STRING)
+    private Categoria categoria ;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fotografo_id", nullable = false)
     private Fotografo fotografo;
+
+
 
 }

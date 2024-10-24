@@ -18,8 +18,8 @@ public record FotografoPayloadDTO(
 
         String password,
 
-        @NotEmpty(message = "Devi inserire un nome")
-        @Size(min = 3, max = 20, message = "Il nome deve avere dai 3 ai 20 caratteri")
+        @NotEmpty(message = "Devi inserire un username")
+        @Size(min = 3, max = 20, message = "Lo username deve avere dai 3 ai 20 caratteri")
         String nome
 
 

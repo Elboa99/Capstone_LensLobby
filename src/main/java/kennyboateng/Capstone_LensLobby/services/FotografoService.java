@@ -47,7 +47,7 @@ public class FotografoService {
         return fotografoRepository.findAll();
     }
 
-    public Fotografo registerFotografo(FotografoPayloadDTO body, MultipartFile profileImage) throws IOException {
+    public Fotografo registerFotografo(FotografoPayloadDTO body, MultipartFile profileImage, MultipartFile coverImage) throws IOException {
         // Controlla se esiste già un fotografo con la stessa email
         if (fotografoRepository.findByEmail(body.email()).isPresent()) {
             throw new IllegalStateException("Email già in uso");
@@ -63,13 +63,23 @@ public class FotografoService {
         if (profileImage != null && !profileImage.isEmpty()) {
             Map uploadResult = cloudinary.uploader().upload(profileImage.getBytes(), ObjectUtils.asMap(
                     "folder", "profile_images",
-                    "public_id", "fotografo_" + fotografo.getEmail()
+                    "public_id", "fotografo_" + fotografo.getEmail() + "_profile"
             ));
             fotografo.setImmagineProfilo(uploadResult.get("url").toString());
         }
 
+        // Gestione dell'immagine di copertina
+        if (coverImage != null && !coverImage.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(coverImage.getBytes(), ObjectUtils.asMap(
+                    "folder", "cover_images",
+                    "public_id", "fotografo_" + fotografo.getEmail() + "_cover"
+            ));
+            fotografo.setCopertina(uploadResult.get("url").toString());
+        }
+
         return fotografoRepository.save(fotografo);
     }
+
 
     public Fotografo updateFotografo(Long id, Fotografo updatedFotografo, MultipartFile profileImage) throws Exception {
         Fotografo existingFotografo = fotografoRepository.findById(id)
