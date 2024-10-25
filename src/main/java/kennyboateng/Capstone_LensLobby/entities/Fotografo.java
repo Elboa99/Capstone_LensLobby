@@ -38,8 +38,9 @@ public class Fotografo implements UserDetails {
     private String copertina;
 
     @OneToMany(mappedBy = "fotografo", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonIgnoreProperties("fotografo")
     private List<Immagine> immagini;
+
 
     @Override
     @JsonIgnore

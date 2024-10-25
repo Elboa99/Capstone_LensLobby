@@ -1,5 +1,6 @@
 package kennyboateng.Capstone_LensLobby.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import kennyboateng.Capstone_LensLobby.enums.Categoria;
 import kennyboateng.Capstone_LensLobby.enums.Role;
@@ -26,6 +27,7 @@ public class Immagine {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fotografo_id", nullable = false)
+    @JsonIgnoreProperties({"immagini", "hibernateLazyInitializer", "handler"})
     private Fotografo fotografo;
 
 

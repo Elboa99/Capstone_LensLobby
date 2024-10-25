@@ -74,6 +74,33 @@ public class ImmagineService {
         return immagineRepository.save(immagine);
     }
 
+    public Immagine salvaImmagineConFile(Long fotografoId, MultipartFile fileImmagine, String descrizione, String categoria) throws IOException {
+        Fotografo fotografo = fotografoRepository.findById(fotografoId)
+                .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
+
+        if (fileImmagine == null || fileImmagine.isEmpty()) {
+            throw new BadRequestException("File dell'immagine obbligatorio.");
+        }
+
+        // Carica l'immagine su Cloudinary
+        Map<String, Object> risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
+                "folder", "uploads_immagini",
+                "public_id", "immagine_" + fotografo.getId() + "_" + System.currentTimeMillis()
+        ));
+        String imageUrl = (String) risultatoUpload.get("url");
+
+        // Crea una nuova entità Immagine
+        Immagine immagine = new Immagine();
+        immagine.setFotografo(fotografo);
+        immagine.setUrl(imageUrl);
+        immagine.setDescrizione(descrizione);
+        immagine.setCategoria(Categoria.valueOf(categoria.toUpperCase()));
+
+        // Salva l'immagine nel repository
+        return immagineRepository.save(immagine);
+    }
+
+
 
 
     // Elimina un'immagine

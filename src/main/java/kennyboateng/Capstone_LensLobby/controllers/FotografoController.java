@@ -1,7 +1,9 @@
 package kennyboateng.Capstone_LensLobby.controllers;
 
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
+import kennyboateng.Capstone_LensLobby.exceptions.NotFoundException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
+import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import kennyboateng.Capstone_LensLobby.services.FotografoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,9 @@ public class FotografoController {
 
     @Autowired
     private FotografoService fotografoService;
+
+    @Autowired
+    private FotografoRepository fotografoRepository;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -80,11 +85,13 @@ public class FotografoController {
 
 
 
-    // Endpoint per ottenere i dati del fotografo autenticato
     @GetMapping("/me")
     public Fotografo getProfile(@AuthenticationPrincipal Fotografo currentFotografo) {
-        return currentFotografo;
+        return fotografoRepository.findByIdWithImmagini(currentFotografo.getId())
+                .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
     }
+
+
 
     // Endpoint per aggiornare i dati del fotografo autenticato
     @PutMapping("/me")

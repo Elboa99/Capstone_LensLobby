@@ -36,11 +36,12 @@ public class FotografoService {
 
 
 
-    // Metodo per trovare un fotografo per ID
-    public Fotografo findFotografoById(Long id) throws NotFoundException {
-        return fotografoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Fotografo non trovato con ID: " + id));
+    public Fotografo findFotografoById(Long id) {
+        return fotografoRepository.findByIdWithImmagini(id)
+                .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
     }
+
+
 
     // Metodo per ottenere tutti i fotografi
     public List<Fotografo> findAllFotografi() {

@@ -2,6 +2,7 @@ package kennyboateng.Capstone_LensLobby.controllers;
 
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.entities.Immagine;
+import kennyboateng.Capstone_LensLobby.enums.Categoria;
 import kennyboateng.Capstone_LensLobby.payloads.ImmaginePayloadDTO;
 import kennyboateng.Capstone_LensLobby.services.ImmagineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/immagini")
@@ -61,4 +64,18 @@ public class ImmagineController {
         immagineService.deleteImmagine(id, fotografo.getId());
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/createWithFile")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> createImmagineConFile(@AuthenticationPrincipal Fotografo fotografo,
+                                                        @RequestParam("fileImmagine") MultipartFile fileImmagine,
+                                                        @RequestParam("descrizione") String descrizione,
+                                                        @RequestParam("categoria") String categoria) throws IOException {
+        immagineService.salvaImmagineConFile(fotografo.getId(), fileImmagine, descrizione, categoria);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Immagine caricata con successo.");
+    }
+
 }
+
+
+
