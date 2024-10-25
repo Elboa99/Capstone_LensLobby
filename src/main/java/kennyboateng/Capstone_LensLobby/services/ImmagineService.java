@@ -67,7 +67,8 @@ public class ImmagineService {
 
         Map risultatoUpload = cloudinary.uploader().upload(fileImmagine.getBytes(), ObjectUtils.asMap(
                 "folder", "uploads_immagini",
-                "public_id", "immagine_" + immagine.getFotografo().getId() + "_" + System.currentTimeMillis()
+                "public_id", "immagine_" + immagine.getFotografo().getId() + "_" + System.currentTimeMillis(),
+                "transformation", ObjectUtils.asMap("width", 1920, "height", 1080, "crop", "limit")
         ));
         immagine.setUrl(risultatoUpload.get("url").toString());
 
