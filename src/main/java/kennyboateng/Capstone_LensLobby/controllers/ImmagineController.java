@@ -1,5 +1,6 @@
 package kennyboateng.Capstone_LensLobby.controllers;
 
+import jakarta.annotation.security.PermitAll;
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.entities.Immagine;
 import kennyboateng.Capstone_LensLobby.enums.Categoria;
@@ -74,6 +75,15 @@ public class ImmagineController {
         immagineService.salvaImmagineConFile(fotografo.getId(), fileImmagine, descrizione, categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body("Immagine caricata con successo.");
     }
+
+    @GetMapping("/random")
+    @PermitAll  // Rendi questo endpoint accessibile pubblicamente
+    public List<Immagine> getRandomImmagini(@RequestParam(defaultValue = "10") int limit) {
+        return immagineService.findRandomImmagini(limit);
+    }
+
+
+
 
 }
 

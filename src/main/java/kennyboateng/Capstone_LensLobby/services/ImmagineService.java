@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ImmagineService {
@@ -122,5 +124,15 @@ public class ImmagineService {
         Immagine immagine = immagineRepository.findById(immagineId)
                 .orElseThrow(() -> new NotFoundException("Immagine non trovata"));
         return immagine.getFotografo().getId().equals(fotografoId);
+    }
+
+    // Metodo per ottenere immagini casuali da tutti i fotografi
+    public List<Immagine> findRandomImmagini(int count) {
+        List<Immagine> allImmagini = immagineRepository.findAll();
+        Random random = new Random();
+        return allImmagini.stream()
+                .sorted((a, b) -> random.nextInt(2) - 1)
+                .limit(count)
+                .toList();
     }
 }

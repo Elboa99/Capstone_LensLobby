@@ -41,7 +41,8 @@ public class Config {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authorization/**").permitAll()  // Accesso aperto per autenticazione e registrazione
+                        .requestMatchers("/authorization/**").permitAll()// Accesso aperto per autenticazione e registrazione
+                        .requestMatchers("/immagini/random/**").permitAll()
                         .anyRequest().authenticated()  // Richiede autenticazione per tutte le altre richieste
                 )
                 .addFilterBefore(jwtCheckFilter, UsernamePasswordAuthenticationFilter.class);
