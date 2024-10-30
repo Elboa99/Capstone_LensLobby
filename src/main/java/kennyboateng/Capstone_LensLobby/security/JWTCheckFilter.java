@@ -122,6 +122,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
+        // Accesso aperto per l'endpoint pubblico dei fotografi
+        if (matcher.match("/fotografi/public/**", path)) {
+            return true;
+        }
+
         // Tutte le altre richieste richiedono autenticazione
         return false;
     }

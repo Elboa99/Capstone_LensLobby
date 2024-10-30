@@ -43,6 +43,7 @@ public class Config {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/authorization/**").permitAll()// Accesso aperto per autenticazione e registrazione
                         .requestMatchers("/immagini/random/**").permitAll()
+                        .requestMatchers("/fotografi/public/**").permitAll()
                         .anyRequest().authenticated()  // Richiede autenticazione per tutte le altre richieste
                 )
                 .addFilterBefore(jwtCheckFilter, UsernamePasswordAuthenticationFilter.class);

@@ -3,6 +3,7 @@ package kennyboateng.Capstone_LensLobby.controllers;
 import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.exceptions.NotFoundException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
+import kennyboateng.Capstone_LensLobby.payloads.FotografoPublicDTO;
 import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import kennyboateng.Capstone_LensLobby.services.FotografoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -74,6 +74,18 @@ public class FotografoController {
     public Fotografo getFotografoById(@PathVariable Long id) throws Exception {
         return fotografoService.findFotografoById(id);
     }
+
+    @GetMapping("/public/{id}")
+    public FotografoPublicDTO getPublicFotografoById(@PathVariable Long id) throws NotFoundException {
+        return fotografoService.findFotografoByIdPublic(id);
+    }
+
+    @GetMapping("/search")
+    public List<Fotografo> searchFotografi(@RequestParam String nome) {
+        return fotografoService.searchFotografiByNome(nome);
+    }
+
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

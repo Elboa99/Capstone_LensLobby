@@ -6,6 +6,8 @@ import kennyboateng.Capstone_LensLobby.entities.Fotografo;
 import kennyboateng.Capstone_LensLobby.exceptions.NotFoundException;
 import kennyboateng.Capstone_LensLobby.exceptions.UnauthorizedException;
 import kennyboateng.Capstone_LensLobby.payloads.FotografoPayloadDTO;
+import kennyboateng.Capstone_LensLobby.payloads.FotografoPublicDTO;
+import kennyboateng.Capstone_LensLobby.payloads.ImmaginePayloadDTO;
 import kennyboateng.Capstone_LensLobby.repositories.FotografoRepository;
 import kennyboateng.Capstone_LensLobby.repositories.ImmagineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +113,32 @@ public class FotografoService {
     public Optional<Fotografo> findByEmail(String email) {
         return fotografoRepository.findByEmail(email);
     }
+
+    public FotografoPublicDTO findFotografoByIdPublic(Long id) {
+        Fotografo fotografo = fotografoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Fotografo non trovato"));
+
+        List<ImmaginePayloadDTO> immagini = fotografo.getImmagini().stream()
+                .map(immagine -> new ImmaginePayloadDTO(
+                        immagine.getUrl(),
+                        immagine.getDescrizione(),
+                        immagine.getCategoria().name()
+                ))
+                .toList();
+
+        return new FotografoPublicDTO(
+                fotografo.getId(),
+                fotografo.getNome(),
+                fotografo.getImmagineProfilo(),
+                fotografo.getCopertina(),
+                immagini
+        );
+    }
+
+    public List<Fotografo> searchFotografiByNome(String nome) {
+        return fotografoRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
 
 
 }
