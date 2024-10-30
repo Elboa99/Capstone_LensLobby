@@ -1,4 +1,4 @@
 package kennyboateng.Capstone_LensLobby.enums;
 
-public enum Categoria { RITRATTO,PAESAGGIO,NATURA
+public enum Categoria { RITRATTO,PAESAGGIO,NATURA,MOTORI,ABSTRACT
 }
