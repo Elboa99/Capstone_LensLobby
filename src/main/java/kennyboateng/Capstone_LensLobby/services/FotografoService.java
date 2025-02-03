@@ -102,6 +102,21 @@ public class FotografoService {
         return fotografoRepository.save(existingFotografo);
     }
 
+    public Fotografo updateBackgroundPicture(Long id, MultipartFile coverImage) throws Exception {
+        Fotografo existingFotografo = fotografoRepository.findById(id)
+                .orElseThrow(() -> new Exception("Fotografo non trovato"));
+
+        if (coverImage != null && !coverImage.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(coverImage.getBytes(), ObjectUtils.asMap(
+                    "folder", "cover_images",
+                    "public_id", "fotografo_" + existingFotografo.getEmail() + "_cover"
+            ));
+            existingFotografo.setCopertina(uploadResult.get("url").toString());
+        }
+
+        return fotografoRepository.save(existingFotografo);
+    }
+
     public void deleteFotografo(Long id) throws Exception {
         Fotografo fotografo = fotografoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Fotografo non trovato"));

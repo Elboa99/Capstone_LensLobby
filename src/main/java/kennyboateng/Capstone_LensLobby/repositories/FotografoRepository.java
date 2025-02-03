@@ -18,6 +18,9 @@ import java.util.Optional;
         @Query("SELECT f FROM Fotografo f LEFT JOIN FETCH f.immagini WHERE f.id = :id")
         Optional<Fotografo> findByIdWithImmagini(@Param("id") Long id);
 
+
+
+        @Query("SELECT f FROM Fotografo f WHERE LOWER(f.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
         List<Fotografo> findByNomeContainingIgnoreCase(String nome);
     }
 

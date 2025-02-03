@@ -80,11 +80,6 @@ public class FotografoController {
         return fotografoService.findFotografoByIdPublic(id);
     }
 
-    @GetMapping("/search")
-    public List<Fotografo> searchFotografi(@RequestParam String nome) {
-        return fotografoService.searchFotografiByNome(nome);
-    }
-
 
 
     @DeleteMapping("/{id}")
@@ -123,10 +118,29 @@ public class FotografoController {
         fotografoService.deleteFotografo(currentFotografo.getId());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<FotografoPublicDTO>> searchFotografi(@RequestParam String nome) {
+        List<Fotografo> fotografi = fotografoService.searchFotografiByNome(nome);
+
+        List<FotografoPublicDTO> risultati = fotografi.stream()
+                .limit(5) // ✅ Limita a 5 risultati per non sovraccaricare il frontend
+                .map(f -> new FotografoPublicDTO(f.getId(), f.getNome(), f.getImmagineProfilo(), f.getCopertina(), null))
+                .toList();
+
+        return ResponseEntity.ok(risultati);
+    }
+
+
     // Endpoint per aggiornare l'immagine del profilo del fotografo autenticato
     @PatchMapping("/me/avatar")
     public Fotografo uploadAvatarPic(@AuthenticationPrincipal Fotografo currentFotografo,
                                      @RequestParam("profileImage") MultipartFile profileImage) throws Exception {
         return fotografoService.updateFotografo(currentFotografo.getId(), currentFotografo, profileImage);
+    }
+
+    @PatchMapping("/me/cover")
+    public Fotografo uploadCoverPic(@AuthenticationPrincipal Fotografo currentFotografo,
+                                    @RequestParam("coverImage") MultipartFile coverImage) throws Exception {
+        return fotografoService.updateBackgroundPicture(currentFotografo.getId(), coverImage);
     }
 }
